@@ -12,8 +12,9 @@ import (
 type Gamedb struct {
 	GID       int    `gorm:"primary_key"`
 	Name      string `gorm:"unique"`
-	StartTime string
-	EndTime   string
+	StartTime time.Time
+	EndTime   time.Time
+	TotalRun  time.Time
 }
 
 //DbInit 连接数据库,表迁移
@@ -34,7 +35,7 @@ func DbInit() {
 	log.Println("Db exist!")
 }
 
-func AddNewGame(gname string) (string, string) {
+func AddNewGame(gname string) (time.Time, time.Time) {
 	db, err := gorm.Open(sqlite.Open("./Gamedb.db"), &gorm.Config{})
 	if err != nil {
 		panic(err)
@@ -44,8 +45,8 @@ func AddNewGame(gname string) (string, string) {
 	if len(FindGame) == 0 {
 		var gamedb Gamedb
 		db.Last(&gamedb)
-		currentTime := time.Now().Format("2006-01-02 15:04:05")
-		newgname := Gamedb{gamedb.GID + 1, gname, currentTime, currentTime}
+		currentTime := time.Now()
+		newgname := Gamedb{gamedb.GID + 1, gname, currentTime, currentTime, currentTime}
 		db.Create(&newgname)
 		log.Println("Successful add new game:", gname)
 		return currentTime, currentTime
@@ -57,7 +58,7 @@ func AddNewGame(gname string) (string, string) {
 	}
 }
 
-func AddEndTime(gname string) (string, string) {
+func AddEndTime(gname string) (time.Time, time.Time) {
 	db, err := gorm.Open(sqlite.Open("./Gamedb.db"), &gorm.Config{})
 	if err != nil {
 		panic(err)
@@ -69,3 +70,13 @@ func AddEndTime(gname string) (string, string) {
 	log.Printf(gname)
 	return gamedb.StartTime, gamedb.EndTime
 }
+
+// func AddTotalTime(gname string) {
+// 	db, err := gorm.Open(sqlite.Open("./Gamedb.db"), &gorm.Config{})
+// 	if err != nil {
+// 		panic(err)
+// 	}
+// 	var gamedb Gamedb
+// 	db.Where("Name=?", gname).Find(&gamedb)
+// 	gamedb.TotalRun += gamedb.EndTime - gamedb.StartTime
+// }

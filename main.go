@@ -31,7 +31,10 @@ func main() {
 				output.SetText(Pname + " is not running")
 			}
 			StartTime, EndTime := AddNewGame(Pname)
-			mygametime.SetText("Start Time:" + StartTime + "\nEnd Time:" + EndTime + "\nTotal Run:")
+			mygametime.SetText("Start Time:" + StartTime.Format("2006-01-02 15:04:05") + "\nEnd Time:" + EndTime.Format("2006-01-02 15:04:05") + "\nTotal Run:")
+		},
+		OnCancel: func() {
+			// AddTotalTime(entry.Text)
 		},
 	}
 
