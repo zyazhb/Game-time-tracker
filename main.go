@@ -9,11 +9,13 @@ import (
 )
 
 func main() {
+	DbInit()
 	a := app.New()
-	w := a.NewWindow("Hello")
+	w := a.NewWindow("Game time tracker BY-ZYA")
 	w.Resize(fyne.NewSize(400, 300))
 
-	output := widget.NewLabel("None")
+	output := widget.NewLabel("No output")
+	mygametime := widget.NewLabel("No time")
 	entry := widget.NewEntry()
 	// textArea := widget.NewMultiLineEntry()
 
@@ -22,24 +24,21 @@ func main() {
 			{Text: "Entry", Widget: entry}},
 		OnSubmit: func() { // optional, handle form submission
 			log.Println("Form submitted:", entry.Text)
-			// log.Println("multiline:", textArea.Text)
 			Pbool, Pname, _ := isProcessExist(entry.Text + ".exe")
 			if Pbool {
 				output.SetText(Pname + " is running")
 			} else {
 				output.SetText(Pname + " is not running")
 			}
-
-			// w.Close()
+			StartTime, EndTime := AddNewGame(Pname)
+			mygametime.SetText("Start Time:" + StartTime + "\nEnd Time:" + EndTime + "\nTotal Run:")
 		},
 	}
-
-	// we can also append items
-	// form.Append("Text", textArea)
 
 	w.SetContent(container.NewVBox(
 		form,
 		output,
+		mygametime,
 	))
 
 	w.ShowAndRun()
