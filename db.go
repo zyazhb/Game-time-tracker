@@ -41,43 +41,59 @@ func DbInit() {
 	if dberr != nil {
 		panic(dberr)
 	}
-	//log.Println("Db exist!")
 }
 
-func AddNewGame(gname string) (time.Time, time.Time, time.Duration) {
-	var FindGame []Gamedb
+func AddNewGame(gname string) {
+	var FindGame Gamedb
 	db.Where("Name=?", gname).Find(&FindGame)
-	if len(FindGame) == 0 {
+
+	if FindGame.Name == "" {
 		var gamedb Gamedb
 		db.Last(&gamedb)
 		currentTime := time.Now()
 		newgname := Gamedb{gamedb.GID + 1, gname, currentTime, currentTime, 0}
 		db.Create(&newgname)
 		log.Println("Successful add new game:", gname)
-		return currentTime, currentTime, 0
 	} else {
-		//log.Println("Found exist game:", gname)
-		//log.Println(FindGame)
-		StartTime, EndTime, Totaltime := AddEndTime(gname)
-		return StartTime, EndTime, Totaltime
+		log.Printf(FindGame.StartTime.String())
+		AddStartTime(gname)
+
 	}
 }
 
-func AddEndTime(gname string) (time.Time, time.Time, time.Duration) {
+func AddStartTime(gname string) {
 	var gamedb Gamedb
-	currentTime := time.Now()
-	db.Model(&gamedb).Where("Name=?", gname).Updates(map[string]interface{}{"EndTime": currentTime})
-	db.Where("Name=?", gname).Find(&gamedb)
-	//log.Printf(gname)
-	Totaltime := AddTotalTime(gname)
-	return gamedb.StartTime, gamedb.EndTime, Totaltime
+	StartTime := time.Now()
+	db.Model(&gamedb).Where("Name=?", gname).Updates(map[string]interface{}{"StartTime": StartTime})
 }
 
-func AddTotalTime(gname string) time.Duration {
+func AddEndTime(gname string) {
+	var gamedb Gamedb
+	StartTime, _, _ := ShowTime(gname)
+	if StartTime.String() != "0001-01-01 00:00:00 +0000 UTC" {
+		currentTime := time.Now()
+		db.Model(&gamedb).Where("Name=?", gname).Updates(map[string]interface{}{"EndTime": currentTime})
+		AddTotalTime(gname)
+	}
+	ClearTime(gname)
+}
+
+func AddTotalTime(gname string) {
 	var gamedb Gamedb
 	db.Where("Name=?", gname).Find(&gamedb)
 	Totaltime := gamedb.TotalRun + gamedb.EndTime.Sub(gamedb.StartTime)
 	log.Printf(gamedb.EndTime.String() + gamedb.StartTime.String())
 	db.Model(&gamedb).Where("Name=?", gname).Updates(map[string]interface{}{"TotalRun": Totaltime})
-	return Totaltime
+	ClearTime(gname)
+}
+
+func ShowTime(gname string) (time.Time, time.Time, time.Duration) {
+	var gamedb Gamedb
+	db.Where("Name=?", gname).Find(&gamedb)
+	return gamedb.StartTime, gamedb.EndTime, gamedb.TotalRun
+}
+
+func ClearTime(gname string) {
+	var gamedb Gamedb
+	db.Model(&gamedb).Where("Name=?", gname).Updates(map[string]interface{}{"StartTime": "", "EndTime": ""})
 }

@@ -1,6 +1,8 @@
 package main
 
 import (
+	"time"
+
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
 	"fyne.io/fyne/v2/container"
@@ -22,19 +24,25 @@ func main() {
 
 	form := &widget.Form{
 		Items: []*widget.FormItem{ // we can specify items in the constructor
-			{Text: "Entry", Widget: entry}},
+			{Text: "Process Name:", Widget: entry}},
 		OnSubmit: func() { // optional, handle form submission
 			//log.Println("Form submitted:", entry.Text)
 			Pbool, Pname, _ := isProcessExist(entry.Text + ".exe")
+			var (
+				StartTime time.Time
+				EndTime   time.Time
+				Totaltime time.Duration
+			)
 			if Pbool {
 				output.SetText(Pname + " is running")
+				AddNewGame(Pname)
 			} else {
 				output.SetText(Pname + " is not running")
+				AddEndTime(Pname)
 			}
-			StartTime, EndTime, Totaltime := AddNewGame(Pname)
-			// Totaltime := AddTotalTime(entry.Text)
+			StartTime, EndTime, Totaltime = ShowTime(Pname)
 			Mygametime.SetText("Start Time:" + StartTime.Format("2006-01-02 15:04:05") + "\nEnd Time:" + EndTime.Format("2006-01-02 15:04:05"))
-			Totalgametime.SetText("\nTotal Run:" + Totaltime.String())
+			Totalgametime.SetText("Total Run:" + Totaltime.String())
 		},
 		OnCancel: func() {
 		},
