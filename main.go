@@ -5,7 +5,7 @@ import (
 	"fyne.io/fyne/v2/app"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/widget"
-	"log"
+	// "log"
 )
 
 func main() {
@@ -15,7 +15,8 @@ func main() {
 	w.Resize(fyne.NewSize(400, 300))
 
 	output := widget.NewLabel("No output")
-	mygametime := widget.NewLabel("No time")
+	Mygametime := widget.NewLabel("No time")
+	Totalgametime := widget.NewLabel("No Totaltime")
 	entry := widget.NewEntry()
 	// textArea := widget.NewMultiLineEntry()
 
@@ -23,25 +24,27 @@ func main() {
 		Items: []*widget.FormItem{ // we can specify items in the constructor
 			{Text: "Entry", Widget: entry}},
 		OnSubmit: func() { // optional, handle form submission
-			log.Println("Form submitted:", entry.Text)
+			//log.Println("Form submitted:", entry.Text)
 			Pbool, Pname, _ := isProcessExist(entry.Text + ".exe")
 			if Pbool {
 				output.SetText(Pname + " is running")
 			} else {
 				output.SetText(Pname + " is not running")
 			}
-			StartTime, EndTime := AddNewGame(Pname)
-			mygametime.SetText("Start Time:" + StartTime.Format("2006-01-02 15:04:05") + "\nEnd Time:" + EndTime.Format("2006-01-02 15:04:05") + "\nTotal Run:")
+			StartTime, EndTime, Totaltime := AddNewGame(Pname)
+			// Totaltime := AddTotalTime(entry.Text)
+			Mygametime.SetText("Start Time:" + StartTime.Format("2006-01-02 15:04:05") + "\nEnd Time:" + EndTime.Format("2006-01-02 15:04:05"))
+			Totalgametime.SetText("\nTotal Run:" + Totaltime.String())
 		},
 		OnCancel: func() {
-			// AddTotalTime(entry.Text)
 		},
 	}
 
 	w.SetContent(container.NewVBox(
 		form,
 		output,
-		mygametime,
+		Mygametime,
+		Totalgametime,
 	))
 
 	w.ShowAndRun()
