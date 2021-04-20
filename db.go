@@ -55,8 +55,10 @@ func AddNewGame(gname string) {
 		db.Create(&newgname)
 		log.Println("Successful add new game:", gname)
 	} else {
-		log.Printf(FindGame.StartTime.String())
-		AddStartTime(gname)
+		StartTime, _, _ := ShowTime(gname)
+		if StartTime.String() == "0001-01-01 00:00:00 +0000 UTC" {
+			AddStartTime(gname)
+		}
 
 	}
 }

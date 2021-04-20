@@ -44,8 +44,6 @@ func main() {
 			Mygametime.SetText("Start Time:" + StartTime.Format("2006-01-02 15:04:05") + "\nEnd Time:" + EndTime.Format("2006-01-02 15:04:05"))
 			Totalgametime.SetText("Total Run:" + Totaltime.String())
 		},
-		OnCancel: func() {
-		},
 	}
 
 	w.SetContent(container.NewVBox(
