@@ -3,7 +3,7 @@ package main
 import (
 	"time"
 
-	"log"
+	// "log"
 
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
@@ -53,7 +53,7 @@ func AddNewGame(gname string) {
 		currentTime := time.Now()
 		newgname := Gamedb{gamedb.GID + 1, gname, currentTime, currentTime, 0}
 		db.Create(&newgname)
-		log.Println("Successful add new game:", gname)
+		// log.Println("Successful add new game:", gname)
 	} else {
 		StartTime, _, _ := ShowTime(gname)
 		if StartTime.String() == "0001-01-01 00:00:00 +0000 UTC" {
@@ -84,7 +84,7 @@ func AddTotalTime(gname string) {
 	var gamedb Gamedb
 	db.Where("Name=?", gname).Find(&gamedb)
 	Totaltime := gamedb.TotalRun + gamedb.EndTime.Sub(gamedb.StartTime)
-	log.Printf(gamedb.EndTime.String() + gamedb.StartTime.String())
+	// log.Printf(gamedb.EndTime.String() + gamedb.StartTime.String())
 	db.Model(&gamedb).Where("Name=?", gname).Updates(map[string]interface{}{"TotalRun": Totaltime})
 	ClearTime(gname)
 }

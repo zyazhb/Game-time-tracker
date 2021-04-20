@@ -6,11 +6,13 @@ import (
 	"os/exec"
 	"strconv"
 	"strings"
+	"syscall"
 )
 
 func isProcessExist(appName string) (bool, string, int) {
 	appary := make(map[string]int)
 	cmd := exec.Command("cmd", "/C", "tasklist")
+	cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
 	output, _ := cmd.Output()
 	//fmt.Printf("fields: %v\n", output)
 	n := strings.Index(string(output), "System")
