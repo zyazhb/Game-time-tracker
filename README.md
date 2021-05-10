@@ -13,3 +13,6 @@ A game time tracker written in go.
 ## Screenshot
 ![img](https://github.com/zyazhb/gitalk/blob/master/pics/Game-time-tracker-main.png?raw=true)
 ![img](https://github.com/zyazhb/gitalk/blob/master/pics/Game-time-tracker-result.png?raw=true)
+
+## TroubleShooting
+If u meet a UI lag in VVR(gsync or freesync) monitor, please turn off VVR feature for this program.
